@@ -77,11 +77,11 @@ data:
     # If process.roles is not set at all, it is assumed to be in ZooKeeper mode.
     # https://kafka.apache.org/documentation/#kraft_role
 
-    if [[ -f "/bitnamilegacy/kafka/data/meta.properties" ]]; then
+    if [[ -f "/bitnami/kafka/data/meta.properties" ]]; then
         if [[ $KAFKA_CFG_PROCESS_ROLES == "" ]]; then
-            export KAFKA_CFG_BROKER_ID="$(grep "broker.id" "/bitnamilegacy/kafka/data/meta.properties" | awk -F '=' '{print $2}')"
+            export KAFKA_CFG_BROKER_ID="$(grep "broker.id" "/bitnami/kafka/data/meta.properties" | awk -F '=' '{print $2}')"
         else
-            export KAFKA_CFG_NODE_ID="$(grep "node.id" "/bitnamilegacy/kafka/data/meta.properties" | awk -F '=' '{print $2}')"
+            export KAFKA_CFG_NODE_ID="$(grep "node.id" "/bitnami/kafka/data/meta.properties" | awk -F '=' '{print $2}')"
         fi
     else
         if [[ $KAFKA_CFG_PROCESS_ROLES == "" ]]; then
@@ -267,17 +267,17 @@ data:
     #!/bin/bash
 
     [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
-    if [[ -f /opt/bitnamilegacy/redis/mounted-etc/master.conf ]];then
-        cp /opt/bitnamilegacy/redis/mounted-etc/master.conf /opt/bitnamilegacy/redis/etc/master.conf
+    if [[ -f /opt/bitnami/redis/mounted-etc/master.conf ]];then
+        cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
     fi
-    if [[ -f /opt/bitnamilegacy/redis/mounted-etc/redis.conf ]];then
-        cp /opt/bitnamilegacy/redis/mounted-etc/redis.conf /opt/bitnamilegacy/redis/etc/redis.conf
+    if [[ -f /opt/bitnami/redis/mounted-etc/redis.conf ]];then
+        cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
     fi
     ARGS=("--port" "${REDIS_PORT}")
     ARGS+=("--requirepass" "${REDIS_PASSWORD}")
     ARGS+=("--masterauth" "${REDIS_PASSWORD}")
-    ARGS+=("--include" "/opt/bitnamilegacy/redis/etc/redis.conf")
-    ARGS+=("--include" "/opt/bitnamilegacy/redis/etc/master.conf")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
     exec redis-server "${ARGS[@]}"
 ---
 # Source: conference-app/templates/c4p-sql-init.yaml
@@ -805,7 +805,7 @@ spec:
       serviceAccountName: conference-kafka
       containers:
         - name: kafka
-          image: docker.io/bitnamilegacy/kafka:3.4.1-debian-11-r0
+          image: docker.io/bitnami/kafka:3.4.1-debian-11-r0
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -814,7 +814,7 @@ spec:
           command:
             - /scripts/setup.sh
           env:
-            - name: bitnamilegacy_DEBUG
+            - name: BITNAMI_DEBUG
               value: "false"
             - name: MY_POD_IP
               valueFrom:
@@ -839,9 +839,9 @@ spec:
             - name: KAFKA_ZOOKEEPER_PROTOCOL
               value: PLAINTEXT
             - name: KAFKA_VOLUME_DIR
-              value: "/bitnamilegacy/kafka"
+              value: "/bitnami/kafka"
             - name: KAFKA_LOG_DIR
-              value: "/opt/bitnamilegacy/kafka/logs"
+              value: "/opt/bitnami/kafka/logs"
             - name: KAFKA_CFG_DELETE_TOPIC_ENABLE
               value: "false"
             - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
@@ -863,7 +863,7 @@ spec:
             - name: KAFKA_CFG_LOG_SEGMENT_BYTES
               value: "1073741824"
             - name: KAFKA_CFG_LOG_DIRS
-              value: "/bitnamilegacy/kafka/data"
+              value: "/bitnami/kafka/data"
             - name: KAFKA_CFG_DEFAULT_REPLICATION_FACTOR
               value: "1"
             - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
@@ -930,9 +930,9 @@ spec:
             requests: {}
           volumeMounts:
             - name: data
-              mountPath: /bitnamilegacy/kafka
+              mountPath: /bitnami/kafka
             - name: logs
-              mountPath: /opt/bitnamilegacy/kafka/logs
+              mountPath: /opt/bitnami/kafka/logs
             - name: scripts
               mountPath: /scripts/setup.sh
               subPath: setup.sh
@@ -1009,19 +1009,19 @@ spec:
       hostIPC: false
       containers:
         - name: postgresql
-          image: docker.io/bitnamilegacy/postgresql:15.3.0-debian-11-r7
+          image: docker.io/bitnami/postgresql:15.3.0-debian-11-r7
           imagePullPolicy: "IfNotPresent"
           securityContext:
             runAsUser: 1001
           env:
-            - name: bitnamilegacy_DEBUG
+            - name: BITNAMI_DEBUG
               value: "true"
             - name: POSTGRESQL_PORT_NUMBER
               value: "5432"
             - name: POSTGRESQL_VOLUME_DIR
-              value: "/bitnamilegacy/postgresql"
+              value: "/bitnami/postgresql"
             - name: PGDATA
-              value: "/bitnamilegacy/postgresql/data"
+              value: "/bitnami/postgresql/data"
             # Authentication
             - name: POSTGRES_PASSWORD
               valueFrom:
@@ -1083,7 +1083,7 @@ spec:
                 
                 - |
                   exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
-                  [ -f /opt/bitnamilegacy/postgresql/tmp/.initialized ] || [ -f /bitnamilegacy/postgresql/.initialized ]
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
           resources:
             limits: {}
             requests:
@@ -1095,7 +1095,7 @@ spec:
             - name: dshm
               mountPath: /dev/shm
             - name: data
-              mountPath: /bitnamilegacy/postgresql
+              mountPath: /bitnami/postgresql
       volumes:
         - name: custom-init-scripts
           configMap:
@@ -1171,7 +1171,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: redis
-          image: docker.io/bitnamilegacy/redis:7.0.11-debian-11-r12
+          image: docker.io/bitnami/redis:7.0.11-debian-11-r12
           imagePullPolicy: "IfNotPresent"
           securityContext:
             runAsUser: 1001
@@ -1179,9 +1179,9 @@ spec:
             - /bin/bash
           args:
             - -c
-            - /opt/bitnamilegacy/scripts/start-scripts/start-master.sh
+            - /opt/bitnami/scripts/start-scripts/start-master.sh
           env:
-            - name: bitnamilegacy_DEBUG
+            - name: BITNAMI_DEBUG
               value: "false"
             - name: REDIS_REPLICATION_MODE
               value: master
@@ -1227,15 +1227,15 @@ spec:
             requests: {}
           volumeMounts:
             - name: start-scripts
-              mountPath: /opt/bitnamilegacy/scripts/start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
             - name: health
               mountPath: /health
             - name: redis-data
               mountPath: /data
             - name: config
-              mountPath: /opt/bitnamilegacy/redis/mounted-etc
+              mountPath: /opt/bitnami/redis/mounted-etc
             - name: redis-tmp-conf
-              mountPath: /opt/bitnamilegacy/redis/etc/
+              mountPath: /opt/bitnami/redis/etc/
             - name: tmp
               mountPath: /tmp
       volumes:
