@@ -1,0 +1,14 @@
+redis:
+  image:
+    repository: bitnamilegacy/redis
+    tag: 7.0.11-debian-11-r12
+
+postgresql:
+  image:
+    repository: bitnamilegacy/postgresql
+    tag: 15.3.0-debian-11-r17
+
+kafka:
+  image:
+    repository: bitnamilegacy/kafka
+    tag: 3.4.1-debian-11-r0
