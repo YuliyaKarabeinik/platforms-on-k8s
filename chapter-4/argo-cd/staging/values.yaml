@@ -1,21 +1,23 @@
+# You are deploying a Kafka chart. The template expects a repository name.
+# We are providing the correct name for the legacy repository.
+# We are REMOVING the global registry to eliminate the "docker.io/bitnamilegacy" prefix conflict.
 
-global:
-  imageRegistry: "docker.io/bitnamilegacy"
-
+# We must now explicitly define the full registry:
 redis:
   image:
+    # Set the registry to the correct one, and the repository to the correct path
+    registry: docker.io
     repository: bitnamilegacy/redis 
     tag: 7.0.11-debian-11-r12
 
 postgresql:
   image:
+    registry: docker.io
     repository: bitnamilegacy/postgresql 
     tag: 15.3.0-debian-11-r17
 
 kafka:
   image:
+    registry: docker.io
     repository: bitnamilegacy/kafka
     tag: 3.4.1-debian-11-r0
-
-
-
