@@ -1,15 +1,3 @@
 global:
   imageRegistry: docker.io/bitnamilegacy
   
-postgresql:
-  image:
-    registry: docker.io/bitnamilegacy
-
-redis:
-  image:
-    registry: docker.io/bitnamilegacy
-
-kafka:
-  image:
-    registry: docker.io/bitnamilegacy
-
