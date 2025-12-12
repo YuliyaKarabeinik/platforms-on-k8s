@@ -29,6 +29,9 @@ spec:
               version: "17.11.3"
             values:
               architecture: standalone
+              image:
+                repository: bitnamilegacy/redis
+                tag: 7.0.11-debian-11-r12
           providerConfigRef:
             name: default
       patches:

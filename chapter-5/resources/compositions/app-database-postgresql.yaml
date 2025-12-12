@@ -29,6 +29,8 @@ spec:
               version: "12.5.9"
             values:
               image:
+                repository: bitnamilegacy/postgresql
+                tag: 15.3.0-debian-11-r17
                 debug: true
               primary: 
                 initdb:
