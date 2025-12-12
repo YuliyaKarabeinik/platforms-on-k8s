@@ -1,6 +1,6 @@
-docker pull bitnami/redis:7.0.11-debian-11-r12
-docker pull bitnami/postgresql:15.3.0-debian-11-r17
-docker pull bitnami/kafka:3.4.1-debian-11-r0
+docker pull bitnamilegacy/redis:7.0.11-debian-11-r12
+docker pull bitnamilegacy/postgresql:15.3.0-debian-11-r17
+docker pull bitnamilegacy/kafka:3.4.1-debian-11-r0
 docker pull registry.k8s.io/ingress-nginx/controller:v1.8.1
 docker pull registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20230407
 docker pull salaboy/frontend-go-1739aa83b5e69d4ccb8a5615830ae66c:v1.0.0
